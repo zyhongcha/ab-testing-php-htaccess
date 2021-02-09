@@ -1,0 +1,22 @@
+
+#A/B Testing using example.com homepage  
+
+RewriteEngine On
+RewriteBase /
+RewriteCond %{HTTP_COOKIE} page_version=([^;]+)
+RewriteRule ^$ https://www.example.com/%1 [L]
+
+
+# No cookie yet and…
+RewriteCond %{HTTP_COOKIE} !page_version=([^;]+)
+# … the number of seconds of the time right now is even
+RewriteCond %{TIME_SEC} [02468]$
+# Then serve the page A and store cookie page_version with value a 
+RewriteRule ^$ https://www.example.com/a [CO=page_version:a:.example.com,L]
+
+# No cookie yet and…
+RewriteCond %{HTTP_COOKIE} !page_version=([^;]+)
+# … the number of seconds of the time right now is odd
+RewriteCond %{TIME_SEC} [13579]$
+# Then serve the page B and store page_version with value b
+RewriteRule ^$ https://www.example.com/b [CO=page_version:b:.example.com,L]
